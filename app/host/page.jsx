@@ -21,6 +21,7 @@ export default function HostPage() {
   const [loading, setLoading] = useState(false);
   const [user, setUser] = useState(null);
   const [myEvents, setMyEvents] = useState([]);
+  const [tcAccepted, setTcAccepted] = useState(false);
   const [formData, setFormData] = useState({
     title: "",
     sport: "Football",
