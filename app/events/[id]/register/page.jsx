@@ -21,6 +21,7 @@ export default function RegisterPage({ params }) {
   const [event, setEvent] = useState(null);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
+  const [tcAccepted, setTcAccepted] = useState(false);
   const [user, setUser] = useState(null);
   const [formData, setFormData] = useState({
     name: "",
@@ -67,6 +68,10 @@ export default function RegisterPage({ params }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!tcAccepted) {
+        alert("Please accept the Terms & Conditions to proceed.");
+        return;
+    }
     setSubmitting(true);
 
     try {
@@ -318,9 +323,33 @@ export default function RegisterPage({ params }) {
                 )}
 
                 <div className="pt-4 border-t" style={{ borderColor: palette.stroke }}>
-                  <div className="flex items-center justify-between mb-6">
-                    <span style={{ color: palette.textMuted }}>Total Payable</span>
-                    <span className="text-2xl font-bold text-[#7c5cff]">₹{event.fee}</span>
+                  <div className="space-y-3 mb-6">
+                    <div className="flex items-center justify-between text-sm" style={{ color: palette.textMuted }}>
+                        <span>Entry Fee</span>
+                        <span>₹{event.fee}</span>
+                    </div>
+                    <div className="flex items-center justify-between text-sm" style={{ color: palette.textMuted }}>
+                        <span>Platform Fee (5%)</span>
+                        <span>₹{Math.round(event.fee * 0.05)}</span>
+                    </div>
+                    <div className="flex items-center justify-between font-bold text-lg pt-2 border-t" style={{ borderColor: palette.stroke }}>
+                        <span>Total Payable</span>
+                        <span className="text-[#7c5cff]">₹{event.fee + Math.round(event.fee * 0.05)}</span>
+                    </div>
+                  </div>
+
+                  <div className="mb-6 flex items-start gap-3 p-3 rounded-xl border bg-black/20" style={{ borderColor: palette.stroke }}>
+                    <input 
+                        type="checkbox" 
+                        id="tc" 
+                        checked={tcAccepted}
+                        onChange={(e) => setTcAccepted(e.target.checked)}
+                        className="mt-1 h-4 w-4 rounded border-gray-600 bg-transparent text-[#7c5cff] focus:ring-[#7c5cff]"
+                    />
+                    <label htmlFor="tc" className="text-xs text-gray-400 leading-relaxed cursor-pointer select-none">
+                        I agree to the <span className="text-[#7c5cff] hover:underline">Terms & Conditions</span>. 
+                        I understand that the platform fee is non-refundable and I agree to the fair play policy of SportsHub.
+                    </label>
                   </div>
 
                   <motion.button

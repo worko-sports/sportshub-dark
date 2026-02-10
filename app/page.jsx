@@ -45,13 +45,27 @@ export default function Page() {
         const data = await res.json();
         
         if (Array.isArray(data)) {
-           const formatted = data.map(e => ({
-            ...e,
-            id: e._id,
-            start: new Date(e.start).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
-            // Ensure banner exists or use default
-            banner: e.banner || "https://images.unsplash.com/photo-1517649763962-0c623066013b"
-          }));
+           const formatted = data.map(e => {
+             let startStr = "Date TBA";
+             try {
+                 if (e.start) {
+                     const date = new Date(e.start);
+                     if (!isNaN(date.getTime())) {
+                         startStr = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+                     }
+                 }
+             } catch (err) {
+                 console.warn("Date parsing error for event", e.id, err);
+             }
+
+             return {
+                ...e,
+                id: e._id,
+                start: startStr,
+                // Ensure banner exists or use default
+                banner: e.banner || "https://images.unsplash.com/photo-1517649763962-0c623066013b"
+             };
+          });
           setEvents(formatted);
         }
       } catch (error) {

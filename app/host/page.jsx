@@ -376,14 +376,71 @@ export default function HostPage() {
             style={{ background: palette.surface, borderColor: palette.stroke }}
           >
              <h2 className="text-lg font-medium mb-4">Banner Image</h2>
-             <Field 
-                label="Banner URL" 
-                icon={<Upload className="h-4 w-4" />}
-                placeholder="https://..." 
-                value={formData.banner} 
-                onChange={v => handleChange("banner", v)} 
-             />
-             <p className="text-xs" style={{ color: palette.textMuted }}>Using a default Unsplash image if left unchanged.</p>
+             
+             <div className="space-y-4">
+                <div className="relative">
+                     <label className="text-xs block mb-1.5" style={{ color: palette.textMuted }}>Upload Banner (Max 3MB)</label>
+                     <input
+                       type="file"
+                       accept="image/*"
+                       onChange={(e) => {
+                          const file = e.target.files[0];
+                          if (file) {
+                            if (file.size > 3 * 1024 * 1024) {
+                                alert("File size too large (max 3MB)");
+                                e.target.value = "";
+                                return;
+                            }
+                            const reader = new FileReader();
+                            reader.onloadend = () => {
+                              handleChange("banner", reader.result);
+                            };
+                            reader.readAsDataURL(file);
+                          }
+                       }}
+                       className="w-full rounded-xl border px-3 py-2 text-sm outline-none bg-transparent transition-colors focus:border-[#7c5cff] file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-[#7c5cff] file:text-white hover:file:opacity-90"
+                       style={{ borderColor: palette.stroke, color: palette.text }}
+                     />
+                 </div>
+
+                 {formData.banner && (
+                    <div className="relative group">
+                        <img 
+                            src={formData.banner} 
+                            alt="Banner Preview" 
+                            className="w-full h-48 object-cover rounded-xl border" 
+                            style={{ borderColor: palette.stroke }} 
+                        />
+                        {formData.banner.startsWith("data:") && (
+                            <button
+                                type="button"
+                                onClick={() => {
+                                    handleChange("banner", "https://images.unsplash.com/photo-1517649763962-0c623066013b?auto=format&fit=crop&q=80&w=1000");
+                                    // Reset file input if possible, but hard to do via state cleanly without ref. 
+                                    // User can just upload another file.
+                                }}
+                                className="absolute top-2 right-2 p-2 rounded-full bg-black/50 text-white hover:bg-red-500/80 transition-colors"
+                            >
+                                <Trash2 className="h-4 w-4" />
+                            </button>
+                        )}
+                    </div>
+                 )}
+                 
+                 <div className="flex items-center gap-2">
+                     <div className="h-px flex-1 bg-gray-800"></div>
+                     <span className="text-xs text-gray-500">OR</span>
+                     <div className="h-px flex-1 bg-gray-800"></div>
+                 </div>
+
+                 <Field 
+                    label="Image URL" 
+                    icon={<Upload className="h-4 w-4" />}
+                    placeholder="https://..." 
+                    value={formData.banner.startsWith("data:") ? "" : formData.banner} 
+                    onChange={v => handleChange("banner", v)} 
+                 />
+             </div>
           </motion.div>
 
           <motion.button
