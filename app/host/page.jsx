@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowLeft, Upload, Calendar, MapPin, Trophy, Users, DollarSign, Layout, Building2, Trash2, Plus, Eye, BarChart3 } from "lucide-react";
+import { ArrowLeft, Upload, Calendar, MapPin, Trophy, Users, DollarSign, Layout, Building2, Trash2, Plus, BarChart3, X } from "lucide-react";
 import Link from "next/link";
 
 const palette = {
@@ -22,6 +22,7 @@ export default function HostPage() {
   const [user, setUser] = useState(null);
   const [myEvents, setMyEvents] = useState([]);
   const [tcAccepted, setTcAccepted] = useState(false);
+  const [showTcModal, setShowTcModal] = useState(false);
   const [formData, setFormData] = useState({
     title: "",
     sport: "Football",
@@ -458,7 +459,7 @@ export default function HostPage() {
                   className="mt-1 h-4 w-4 rounded border-gray-600 bg-transparent text-[#7c5cff] focus:ring-[#7c5cff]"
               />
               <label htmlFor="tc" className="text-xs text-gray-400 leading-relaxed cursor-pointer select-none">
-                  I agree to the <span className="text-[#7c5cff] hover:underline">Terms & Conditions</span>. 
+                  I agree to the <span className="text-[#7c5cff] hover:underline font-medium" onClick={(e) => { e.preventDefault(); setShowTcModal(true); }}>Terms & Conditions</span>. 
                   I confirm that the event details are accurate and comply with SportsHub policies.
               </label>
           </div>
@@ -522,6 +523,76 @@ export default function HostPage() {
           </div>
         </div>
       </motion.div>
+
+      <AnimatePresence>
+        {showTcModal && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm"
+            onClick={() => setShowTcModal(false)}
+          >
+            <motion.div
+              initial={{ scale: 0.95, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.95, opacity: 0 }}
+              onClick={(e) => e.stopPropagation()}
+              className="w-full max-w-lg rounded-2xl border p-6 shadow-2xl relative"
+              style={{ background: palette.surface, borderColor: palette.stroke }}
+            >
+              <button 
+                onClick={() => setShowTcModal(false)}
+                className="absolute top-4 right-4 p-1 rounded-full hover:bg-white/10 transition-colors"
+              >
+                <X className="h-5 w-5" style={{ color: palette.textMuted }} />
+              </button>
+
+              <h3 className="text-xl font-bold mb-4" style={{ color: palette.text }}>Terms & Conditions</h3>
+              
+              <div className="space-y-4 text-sm max-h-[60vh] overflow-y-auto pr-2 custom-scrollbar" style={{ color: palette.textMuted }}>
+                <div>
+                  <h4 className="font-semibold mb-1" style={{ color: palette.text }}>1. Platform Fee</h4>
+                  <p>SportsHub charges a <strong>5% non-refundable platform fee</strong> on all paid event registrations. This fee is deducted automatically from the total entry fee collected.</p>
+                </div>
+
+                <div>
+                  <h4 className="font-semibold mb-1" style={{ color: palette.text }}>2. Accurate Information</h4>
+                  <p>Hosts must provide accurate details regarding the event date, venue, prize pool, and rules. Misleading information may lead to account suspension and event cancellation.</p>
+                </div>
+
+                <div>
+                  <h4 className="font-semibold mb-1" style={{ color: palette.text }}>3. Fair Play Policy</h4>
+                  <p>All events must adhere to standard fair play rules. Match-fixing, discrimination, or unsportsmanlike conduct is strictly prohibited.</p>
+                </div>
+
+                <div>
+                  <h4 className="font-semibold mb-1" style={{ color: palette.text }}>4. Cancellation & Refunds</h4>
+                  <p>If an event is cancelled by the host, full refunds (excluding platform fees) must be processed within 5-7 business days. Hosts are responsible for communicating changes to participants.</p>
+                </div>
+                
+                <div>
+                   <h4 className="font-semibold mb-1" style={{ color: palette.text }}>5. Liability</h4>
+                   <p>SportsHub is a facilitation platform and is not liable for any injuries, disputes, or logistical issues occurring during the event.</p>
+                </div>
+              </div>
+
+              <div className="mt-6 flex justify-end">
+                <button
+                  onClick={() => {
+                    setTcAccepted(true);
+                    setShowTcModal(false);
+                  }}
+                  className="px-6 py-2 rounded-xl text-sm font-medium transition-colors hover:opacity-90"
+                  style={{ background: palette.primary, color: "white" }}
+                >
+                  I Agree
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
