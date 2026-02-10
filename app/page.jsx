@@ -133,9 +133,13 @@ export default function Page() {
                      Discover, Register, and Compete in the best sports events across the country. From local matches to national leagues.
                  </p>
                  <div className="flex flex-wrap gap-4">
-                     <button className="px-8 py-3 rounded-full font-semibold text-white transition-all hover:scale-105 shadow-lg shadow-[#7c5cff]/25" style={{ background: palette.primary }}>
+                     <Link 
+                        href="#explore"
+                        className="px-8 py-3 rounded-full font-semibold text-white transition-all hover:scale-105 shadow-lg shadow-[#7c5cff]/25" 
+                        style={{ background: palette.primary }}
+                     >
                          Explore Events
-                     </button>
+                     </Link>
                      <Link href="/host">
                         <button className="px-8 py-3 rounded-full font-semibold transition-all hover:bg-white/5 border" style={{ borderColor: palette.stroke }}>
                             Host a Tournament
@@ -148,7 +152,7 @@ export default function Page() {
          <div className="absolute top-0 right-0 w-1/2 h-full bg-gradient-to-l from-[#7c5cff]/10 to-transparent pointer-events-none blur-3xl"></div>
       </div>
 
-      <main className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12 space-y-16">
+      <main id="explore" className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12 space-y-16">
         
         {/* Categories Section */}
         <section>
