@@ -122,34 +122,71 @@ export default function Page() {
 
       {/* Hero Section - Unstop Style */}
       <div className="relative overflow-hidden border-b" style={{ borderColor: palette.stroke, background: palette.surface }}>
-         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-16 md:py-24 relative z-10">
+         <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-16 md:py-24 relative z-10"
+         >
              <div className="max-w-3xl">
-                 <h1 className="text-4xl md:text-6xl font-bold mb-6 leading-tight">
+                 <motion.h1 
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.2, duration: 0.8 }}
+                    className="text-4xl md:text-6xl font-bold mb-6 leading-tight"
+                 >
                      <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#7c5cff] to-[#00e0b8]">Unlock Your Potential</span>
                      <br />
                      in Sports Tournaments
-                 </h1>
-                 <p className="text-lg md:text-xl mb-8 leading-relaxed" style={{ color: palette.textMuted }}>
+                 </motion.h1>
+                 <motion.p 
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: 0.4, duration: 0.8 }}
+                    className="text-lg md:text-xl mb-8 leading-relaxed" 
+                    style={{ color: palette.textMuted }}
+                 >
                      Discover, Register, and Compete in the best sports events across the country. From local matches to national leagues.
-                 </p>
-                 <div className="flex flex-wrap gap-4">
+                 </motion.p>
+                 <motion.div 
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.6, duration: 0.8 }}
+                    className="flex flex-wrap gap-4"
+                 >
                      <Link 
                         href="#explore"
-                        className="px-8 py-3 rounded-full font-semibold text-white transition-all hover:scale-105 shadow-lg shadow-[#7c5cff]/25" 
-                        style={{ background: palette.primary }}
+                        className="block"
                      >
-                         Explore Events
+                        <motion.button
+                            whileHover={{ scale: 1.05 }}
+                            whileTap={{ scale: 0.95 }}
+                            className="px-8 py-3 rounded-full font-semibold text-white shadow-lg shadow-[#7c5cff]/25" 
+                            style={{ background: palette.primary }}
+                        >
+                            Explore Events
+                        </motion.button>
                      </Link>
                      <Link href="/host">
-                        <button className="px-8 py-3 rounded-full font-semibold transition-all hover:bg-white/5 border" style={{ borderColor: palette.stroke }}>
+                        <motion.button 
+                            whileHover={{ scale: 1.05, backgroundColor: "rgba(255,255,255,0.05)" }}
+                            whileTap={{ scale: 0.95 }}
+                            className="px-8 py-3 rounded-full font-semibold border" 
+                            style={{ borderColor: palette.stroke }}
+                        >
                             Host a Tournament
-                        </button>
+                        </motion.button>
                      </Link>
-                 </div>
+                 </motion.div>
              </div>
-         </div>
+         </motion.div>
          {/* Abstract shapes/glow */}
-         <div className="absolute top-0 right-0 w-1/2 h-full bg-gradient-to-l from-[#7c5cff]/10 to-transparent pointer-events-none blur-3xl"></div>
+         <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 1.5 }}
+            className="absolute top-0 right-0 w-1/2 h-full bg-gradient-to-l from-[#7c5cff]/10 to-transparent pointer-events-none blur-3xl"
+         ></motion.div>
       </div>
 
       <main id="explore" className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12 space-y-16">
@@ -161,19 +198,25 @@ export default function Page() {
                 <Link href="/events" className="text-sm font-medium hover:underline" style={{ color: palette.primarySoft }}>View all</Link>
             </div>
             <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 gap-4">
-                {["Cricket", "Football", "Badminton", "Basketball", "Tennis", "Esports"].map((sport) => (
-                    <button 
+                {["Cricket", "Football", "Badminton", "Basketball", "Tennis", "Esports"].map((sport, idx) => (
+                    <motion.button 
                         key={sport}
+                        initial={{ opacity: 0, scale: 0.9 }}
+                        whileInView={{ opacity: 1, scale: 1 }}
+                        viewport={{ once: true }}
+                        transition={{ delay: idx * 0.1 }}
+                        whileHover={{ scale: 1.05, borderColor: "#7c5cff", backgroundColor: "rgba(124, 92, 255, 0.05)" }}
+                        whileTap={{ scale: 0.95 }}
                         onClick={() => { setSearch(sport); setFilter(sport); }}
-                        className="flex flex-col items-center justify-center p-6 rounded-2xl border transition-all hover:border-[#7c5cff] hover:bg-[#7c5cff]/5 group"
+                        className="flex flex-col items-center justify-center p-6 rounded-2xl border transition-colors group"
                         style={{ borderColor: palette.stroke, background: palette.surface }}
                     >
-                        <div className="h-12 w-12 rounded-full bg-white/5 flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
+                        <div className="h-12 w-12 rounded-full bg-white/5 flex items-center justify-center mb-3 transition-transform">
                              {/* Placeholder icons based on sport name would be ideal, using generic for now */}
                              <Trophy className="h-6 w-6 text-[#00e0b8]" />
                         </div>
                         <span className="font-medium text-sm">{sport}</span>
-                    </button>
+                    </motion.button>
                 ))}
             </div>
         </section>
