@@ -81,6 +81,11 @@ export default function HostPage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     
+    if (!tcAccepted) {
+        alert("Please accept the Terms & Conditions to publish the event.");
+        return;
+    }
+
     if (parseInt(formData.fee) < 0) {
         alert("Entry fee cannot be negative");
         return;
@@ -442,6 +447,20 @@ export default function HostPage() {
                  />
              </div>
           </motion.div>
+
+          <div className="flex items-start gap-3 p-3 rounded-xl border bg-black/20" style={{ borderColor: palette.stroke }}>
+              <input 
+                  type="checkbox" 
+                  id="tc" 
+                  checked={tcAccepted}
+                  onChange={(e) => setTcAccepted(e.target.checked)}
+                  className="mt-1 h-4 w-4 rounded border-gray-600 bg-transparent text-[#7c5cff] focus:ring-[#7c5cff]"
+              />
+              <label htmlFor="tc" className="text-xs text-gray-400 leading-relaxed cursor-pointer select-none">
+                  I agree to the <span className="text-[#7c5cff] hover:underline">Terms & Conditions</span>. 
+                  I confirm that the event details are accurate and comply with SportsHub policies.
+              </label>
+          </div>
 
           <motion.button
             whileHover={{ scale: 1.02 }}
