@@ -46,7 +46,7 @@ export default function HostPage() {
           router.push('/login');
         } else {
           setUser(data.user);
-          setFormData(prev => ({ ...prev, org: data.user.name }));
+          setFormData(prev => ({ ...prev, org: data.user.name || "" }));
           
           // Fetch user events
           fetch('/api/events/user')
@@ -416,7 +416,7 @@ export default function HostPage() {
                             className="w-full h-48 object-cover rounded-xl border" 
                             style={{ borderColor: palette.stroke }} 
                         />
-                        {formData.banner.startsWith("data:") && (
+                        {formData.banner && formData.banner.startsWith("data:") && (
                             <button
                                 type="button"
                                 onClick={() => {
@@ -442,7 +442,7 @@ export default function HostPage() {
                     label="Image URL" 
                     icon={<Upload className="h-4 w-4" />}
                     placeholder="https://..." 
-                    value={formData.banner.startsWith("data:") ? "" : formData.banner} 
+                    value={(formData.banner && formData.banner.startsWith("data:")) ? "" : (formData.banner || "")} 
                     onChange={v => handleChange("banner", v)} 
                  />
              </div>
