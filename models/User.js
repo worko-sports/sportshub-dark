@@ -8,11 +8,18 @@ const UserSchema = new mongoose.Schema({
   },
   password: {
     type: String,
-    required: [true, 'Please provide a password'],
+    required: false,
   },
   name: {
     type: String,
     required: [true, 'Please provide a name'],
+  },
+  image: {
+    type: String,
+  },
+  provider: {
+    type: String,
+    default: 'credentials',
   },
 }, {
   timestamps: true,
