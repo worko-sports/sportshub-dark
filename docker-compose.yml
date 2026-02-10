@@ -1,0 +1,37 @@
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: sportshub-dark
+    restart: always
+    ports:
+      - "3001:3000"
+    dns:
+      - 8.8.8.8
+      - 8.8.4.4
+    environment:
+      - NODE_ENV=production
+      - MONGODB_URI=mongodb://mongo:27017/sportshub
+    depends_on:
+      - mongo
+    networks:
+      - sportshub-network
+
+  mongo:
+    image: mongo:latest
+    container_name: sportshub-mongo
+    restart: always
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+    networks:
+      - sportshub-network
+
+networks:
+  sportshub-network:
+    driver: bridge
+
+volumes:
+  mongodb_data:
