@@ -134,11 +134,11 @@ export default function EventsPage() {
                           className="absolute right-0 mt-2 w-48 rounded-2xl border p-2 shadow-2xl backdrop-blur-xl bg-[#111520]/90"
                           style={{ borderColor: palette.stroke }}
                         >
-                          <Link href="/host" className="flex items-center gap-2 p-3 rounded-xl transition-all hover:bg-white/5">
+                          <Link href="/dashboard" className="flex items-center gap-2 p-3 rounded-xl transition-all hover:bg-white/5">
                             <Layout className="h-4 w-4" style={{ color: palette.primary }} />
                             <span className="text-sm font-medium">Dashboard</span>
                           </Link>
-                          <Link href="/host" className="flex items-center gap-2 p-3 rounded-xl transition-all hover:bg-white/5">
+                          <Link href="/profile" className="flex items-center gap-2 p-3 rounded-xl transition-all hover:bg-white/5">
                             <UserIcon className="h-4 w-4" style={{ color: palette.accent }} />
                             <span className="text-sm font-medium">Profile</span>
                           </Link>
@@ -218,13 +218,13 @@ export default function EventsPage() {
                           <span className="text-xs text-gray-400">{user.email}</span>
                         </div>
                       </div>
-                      <Link href="/host" onClick={() => setIsMobileMenuOpen(false)}>
+                      <Link href="/dashboard" onClick={() => setIsMobileMenuOpen(false)}>
                         <div className="flex items-center gap-3 p-3 rounded-xl transition-all hover:bg-white/5">
                           <Layout className="h-5 w-5" style={{ color: palette.primary }} />
                           <span>Dashboard</span>
                         </div>
                       </Link>
-                      <Link href="/host" onClick={() => setIsMobileMenuOpen(false)}>
+                      <Link href="/profile" onClick={() => setIsMobileMenuOpen(false)}>
                         <div className="flex items-center gap-3 p-3 rounded-xl transition-all hover:bg-white/5">
                           <UserIcon className="h-5 w-5" style={{ color: palette.accent }} />
                           <span>Profile</span>
