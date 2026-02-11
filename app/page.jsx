@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Search, MapPin, Calendar, Trophy, Users, Filter, ArrowRight, Plus, LogIn, User as UserIcon, Clock, Menu, X, Star } from "lucide-react";
+import { Search, MapPin, Calendar, Trophy, Users, Filter, ArrowRight, Plus, LogIn, User as UserIcon, Clock, Menu, X, Star, Layout } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 const palette = {
@@ -23,6 +23,7 @@ export default function Page() {
   const [filter, setFilter] = useState("All");
   const [user, setUser] = useState(null);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
 
   useEffect(() => {
     // Check auth
@@ -120,11 +121,51 @@ export default function Page() {
               
               <div className="hidden sm:block">
                 {user ? (
-                  <div className="flex items-center gap-3">
-                    <span className="text-sm">Hi, {user.name}</span>
-                    <div className="h-8 w-8 rounded-full bg-gradient-to-br from-[#7c5cff] to-[#00e0b8] flex items-center justify-center text-xs font-bold text-white">
-                      {user.name[0]}
-                    </div>
+                  <div className="relative">
+                    <button 
+                      onClick={() => setIsProfileDropdownOpen(!isProfileDropdownOpen)}
+                      className="flex items-center gap-3 p-1 rounded-full transition-all hover:bg-white/5"
+                    >
+                      <span className="text-sm font-medium">Hi, {user.name.split(' ')[0]}</span>
+                      <div className="h-8 w-8 rounded-full bg-gradient-to-br from-[#7c5cff] to-[#00e0b8] flex items-center justify-center text-xs font-bold text-white shadow-lg">
+                        {user.name[0]}
+                      </div>
+                    </button>
+
+                    <AnimatePresence>
+                      {isProfileDropdownOpen && (
+                        <motion.div
+                          initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                          animate={{ opacity: 1, y: 0, scale: 1 }}
+                          exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                          className="absolute right-0 mt-2 w-48 rounded-2xl border p-2 shadow-2xl backdrop-blur-xl bg-[#111520]/90"
+                          style={{ borderColor: palette.stroke }}
+                        >
+                          <Link href="/host" className="flex items-center gap-2 p-3 rounded-xl transition-all hover:bg-white/5">
+                            <Layout className="h-4 w-4" style={{ color: palette.primary }} />
+                            <span className="text-sm font-medium">Dashboard</span>
+                          </Link>
+                          <Link href="/host" className="flex items-center gap-2 p-3 rounded-xl transition-all hover:bg-white/5">
+                            <UserIcon className="h-4 w-4" style={{ color: palette.accent }} />
+                            <span className="text-sm font-medium">Profile</span>
+                          </Link>
+                          <div className="my-1 border-t" style={{ borderColor: palette.stroke }}></div>
+                          <button 
+                            onClick={async () => {
+                              // Handle logout - since the app uses custom auth me endpoint, we might need to clear it
+                              // But usually signOut() from next-auth/react handles it if using next-auth
+                              // For now, let's just redirect to a logout route if it exists or clear user
+                              setUser(null);
+                              setIsProfileDropdownOpen(false);
+                            }}
+                            className="w-full flex items-center gap-2 p-3 rounded-xl transition-all hover:bg-red-500/10 text-red-400"
+                          >
+                            <LogIn className="rotate-180 h-4 w-4" />
+                            <span className="text-sm font-medium">Logout</span>
+                          </button>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
                   </div>
                 ) : (
                   <Link href="/login">
@@ -177,11 +218,38 @@ export default function Page() {
                     </div>
                   </Link>
                   {user ? (
-                    <div className="flex items-center gap-3 p-3 rounded-xl bg-white/5">
-                      <div className="h-8 w-8 rounded-full bg-gradient-to-br from-[#7c5cff] to-[#00e0b8] flex items-center justify-center text-xs font-bold text-white">
-                        {user.name[0]}
+                    <div className="space-y-2">
+                      <div className="flex items-center gap-3 p-3 rounded-xl bg-white/5 border border-white/10">
+                        <div className="h-10 w-10 rounded-full bg-gradient-to-br from-[#7c5cff] to-[#00e0b8] flex items-center justify-center text-sm font-bold text-white shadow-lg">
+                          {user.name[0]}
+                        </div>
+                        <div className="flex flex-col">
+                          <span className="font-semibold">{user.name}</span>
+                          <span className="text-xs text-gray-400">{user.email}</span>
+                        </div>
                       </div>
-                      <span>{user.name}</span>
+                      <Link href="/host" onClick={() => setIsMobileMenuOpen(false)}>
+                        <div className="flex items-center gap-3 p-3 rounded-xl transition-all hover:bg-white/5">
+                          <Layout className="h-5 w-5" style={{ color: palette.primary }} />
+                          <span>Dashboard</span>
+                        </div>
+                      </Link>
+                      <Link href="/host" onClick={() => setIsMobileMenuOpen(false)}>
+                        <div className="flex items-center gap-3 p-3 rounded-xl transition-all hover:bg-white/5">
+                          <UserIcon className="h-5 w-5" style={{ color: palette.accent }} />
+                          <span>Profile</span>
+                        </div>
+                      </Link>
+                      <button 
+                        onClick={() => {
+                          setUser(null);
+                          setIsMobileMenuOpen(false);
+                        }}
+                        className="w-full flex items-center gap-3 p-3 rounded-xl transition-all hover:bg-red-500/10 text-red-400"
+                      >
+                        <LogIn className="rotate-180 h-5 w-5" />
+                        <span>Logout</span>
+                      </button>
                     </div>
                   ) : (
                     <Link href="/login" onClick={() => setIsMobileMenuOpen(false)}>
