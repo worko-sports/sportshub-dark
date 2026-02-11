@@ -87,7 +87,9 @@ export default function EventsPage() {
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="flex h-16 items-center justify-between gap-4">
             <Link href="/" className="flex items-center gap-2 flex-shrink-0">
-              <Image src="/logo.png" alt="SportsHub Logo" width={32} height={32} className="object-contain" />
+              <div className="h-8 w-8 rounded-lg bg-[#7c5cff] flex items-center justify-center">
+                <Trophy className="h-5 w-5 text-white" />
+              </div>
               <span className="text-xl font-bold tracking-tight">SPORTSHUB</span>
             </Link>
 
