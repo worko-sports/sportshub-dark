@@ -2,8 +2,8 @@
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Search, MapPin, Trophy, Plus, LogIn, Clock, ArrowLeft } from "lucide-react";
-import { motion } from "framer-motion";
+import { Search, MapPin, Trophy, Plus, LogIn, Clock, ArrowLeft, Menu, X } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 
 const palette = {
   bg: "#0b0e14",
@@ -22,6 +22,7 @@ export default function EventsPage() {
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState("All");
   const [user, setUser] = useState(null);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   useEffect(() => {
     // Check auth
@@ -85,10 +86,8 @@ export default function EventsPage() {
       <nav className="sticky top-0 z-50 border-b backdrop-blur-md bg-[#0b0e14]/80" style={{ borderColor: palette.stroke }}>
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="flex h-16 items-center justify-between gap-4">
-            <Link href="/" className="flex items-center gap-2">
-              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-[#7c5cff] to-[#00e0b8]">
-                <Trophy className="h-5 w-5 text-white" />
-              </div>
+            <Link href="/" className="flex items-center gap-2 flex-shrink-0">
+              <Image src="/logo.png" alt="SportsHub Logo" width={32} height={32} className="object-contain" />
               <span className="text-xl font-bold tracking-tight">SPORTSHUB</span>
             </Link>
 
@@ -109,23 +108,85 @@ export default function EventsPage() {
                   <Plus className="h-4 w-4" /> Host Event
                 </button>
               </Link>
-              {user ? (
-                <div className="flex items-center gap-3">
-                  <span className="text-sm hidden sm:block">Hi, {user.name}</span>
-                  <div className="h-8 w-8 rounded-full bg-gradient-to-br from-[#7c5cff] to-[#00e0b8] flex items-center justify-center text-xs font-bold text-white">
-                    {user.name[0]}
+              
+              <div className="hidden sm:block">
+                {user ? (
+                  <div className="flex items-center gap-3">
+                    <span className="text-sm">Hi, {user.name}</span>
+                    <div className="h-8 w-8 rounded-full bg-gradient-to-br from-[#7c5cff] to-[#00e0b8] flex items-center justify-center text-xs font-bold text-white">
+                      {user.name[0]}
+                    </div>
                   </div>
-                </div>
-              ) : (
-                <Link href="/login">
-                  <button className="flex items-center gap-2 rounded-full px-5 py-2 text-sm font-medium transition-all hover:opacity-90" style={{ background: palette.primary, color: "white" }}>
-                    <LogIn className="h-4 w-4" /> Login
-                  </button>
-                </Link>
-              )}
+                ) : (
+                  <Link href="/login">
+                    <button className="flex items-center gap-2 rounded-full px-5 py-2 text-sm font-medium transition-all hover:opacity-90" style={{ background: palette.primary, color: "white" }}>
+                      <LogIn className="h-4 w-4" /> Login
+                    </button>
+                  </Link>
+                )}
+              </div>
+
+              {/* Mobile Menu Button */}
+              <button 
+                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                className="p-2 rounded-lg sm:hidden"
+                style={{ background: palette.surface, color: palette.text }}
+              >
+                {isMobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+              </button>
             </div>
           </div>
         </div>
+
+        {/* Mobile Menu */}
+        <AnimatePresence>
+          {isMobileMenuOpen && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: "auto" }}
+              exit={{ opacity: 0, height: 0 }}
+              className="sm:hidden border-t overflow-hidden"
+              style={{ background: palette.surface, borderColor: palette.stroke }}
+            >
+              <div className="px-4 py-6 space-y-4">
+                <div className="flex items-center rounded-full border px-4 py-2" style={{ borderColor: palette.stroke }}>
+                  <Search className="h-4 w-4" style={{ color: palette.textMuted }} />
+                  <input 
+                    type="text" 
+                    placeholder="Search events..." 
+                    className="ml-3 flex-1 bg-transparent text-sm outline-none"
+                    value={search}
+                    onChange={(e) => setSearch(e.target.value)}
+                  />
+                </div>
+                
+                <div className="grid grid-cols-1 gap-2">
+                  <Link href="/host" onClick={() => setIsMobileMenuOpen(false)}>
+                    <div className="flex items-center gap-3 p-3 rounded-xl bg-white/5">
+                      <Plus className="h-5 w-5" />
+                      <span>Host Event</span>
+                    </div>
+                  </Link>
+                  {user ? (
+                    <div className="flex items-center gap-3 p-3 rounded-xl bg-white/5">
+                      <div className="h-8 w-8 rounded-full bg-gradient-to-br from-[#7c5cff] to-[#00e0b8] flex items-center justify-center text-xs font-bold text-white">
+                        {user.name[0]}
+                      </div>
+                      <span>{user.name}</span>
+                    </div>
+                  ) : (
+                    <Link href="/login" onClick={() => setIsMobileMenuOpen(false)}>
+                      <div className="flex items-center gap-3 p-3 rounded-xl bg-[#7c5cff]">
+                        <LogIn className="h-5 w-5" />
+                        <span>Login / Register</span>
+                      </div>
+                    </Link>
+                  )}
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </nav>
 
       <main className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12">
@@ -154,8 +215,20 @@ export default function EventsPage() {
         </div>
 
         {loading ? (
-          <div className="flex justify-center py-12">
-            <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2" style={{ borderColor: palette.primary }}></div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {[...Array(6)].map((_, i) => (
+                <div key={i} className="rounded-2xl border overflow-hidden h-full flex flex-col" style={{ background: palette.surface, borderColor: palette.stroke }}>
+                    <div className="h-48 bg-white/5 animate-pulse" />
+                    <div className="p-5 space-y-3">
+                        <div className="h-6 bg-white/5 animate-pulse rounded-lg w-3/4" />
+                        <div className="h-4 bg-white/5 animate-pulse rounded-lg w-1/2" />
+                        <div className="pt-4 border-t flex justify-between" style={{ borderColor: palette.stroke }}>
+                            <div className="h-8 bg-white/5 animate-pulse rounded-lg w-1/3" />
+                            <div className="h-8 bg-white/5 animate-pulse rounded-lg w-1/3" />
+                        </div>
+                    </div>
+                </div>
+            ))}
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

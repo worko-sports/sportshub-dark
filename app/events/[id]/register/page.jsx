@@ -23,6 +23,7 @@ export default function RegisterPage({ params }) {
   const [submitting, setSubmitting] = useState(false);
   const [tcAccepted, setTcAccepted] = useState(false);
   const [user, setUser] = useState(null);
+  const [errors, setErrors] = useState({});
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -68,10 +69,19 @@ export default function RegisterPage({ params }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!tcAccepted) {
-        alert("Please accept the Terms & Conditions to proceed.");
+    setErrors({});
+    
+    let newErrors = {};
+    if (!tcAccepted) newErrors.tc = "Please accept the Terms & Conditions";
+    if (!formData.phone) newErrors.phone = "Phone number is required";
+    if (event.qrCode && !formData.transactionId) newErrors.transactionId = "Transaction ID is required";
+    if (event.qrCode && !formData.paymentScreenshot) newErrors.paymentScreenshot = "Payment screenshot is required";
+
+    if (Object.keys(newErrors).length > 0) {
+        setErrors(newErrors);
         return;
     }
+
     setSubmitting(true);
 
     try {
@@ -205,7 +215,7 @@ export default function RegisterPage({ params }) {
                         required
                         value={formData.name}
                         onChange={e => setFormData({...formData, name: e.target.value})}
-                        className="w-full rounded-xl border px-3 py-2 pl-9 text-sm outline-none bg-transparent transition-colors focus:border-[#7c5cff]"
+                        className="w-full rounded-xl border px-3 py-2 pl-9 text-sm outline-none bg-transparent transition-all focus:border-[#7c5cff]"
                         style={{ borderColor: palette.stroke, color: palette.text }}
                       />
                       <User className="absolute left-3 top-2.5 h-4 w-4" style={{ color: palette.textMuted }} />
@@ -220,7 +230,7 @@ export default function RegisterPage({ params }) {
                         required
                         value={formData.email}
                         onChange={e => setFormData({...formData, email: e.target.value})}
-                        className="w-full rounded-xl border px-3 py-2 pl-9 text-sm outline-none bg-transparent transition-colors focus:border-[#7c5cff]"
+                        className="w-full rounded-xl border px-3 py-2 pl-9 text-sm outline-none bg-transparent transition-all focus:border-[#7c5cff]"
                         style={{ borderColor: palette.stroke, color: palette.text }}
                       />
                       <Mail className="absolute left-3 top-2.5 h-4 w-4" style={{ color: palette.textMuted }} />
@@ -236,9 +246,10 @@ export default function RegisterPage({ params }) {
                     placeholder="+91 98765 43210"
                     value={formData.phone}
                     onChange={e => setFormData({...formData, phone: e.target.value})}
-                    className="w-full rounded-xl border px-3 py-2 text-sm outline-none bg-transparent transition-colors focus:border-[#7c5cff]"
-                    style={{ borderColor: palette.stroke, color: palette.text }}
+                    className={`w-full rounded-xl border px-3 py-2 text-sm outline-none bg-transparent transition-all focus:border-[#7c5cff] ${errors.phone ? 'border-red-500 bg-red-500/5' : ''}`}
+                    style={{ borderColor: errors.phone ? undefined : palette.stroke, color: palette.text }}
                   />
+                  {errors.phone && <p className="text-[10px] text-red-500 mt-1 ml-1">{errors.phone}</p>}
                 </div>
 
                 {event.customQuestions && event.customQuestions.length > 0 && (
@@ -262,7 +273,7 @@ export default function RegisterPage({ params }) {
                             }
                             setFormData(prev => ({ ...prev, answers: newAnswers }));
                           }}
-                          className="w-full rounded-xl border px-3 py-2 text-sm outline-none bg-transparent transition-colors focus:border-[#7c5cff]"
+                          className="w-full rounded-xl border px-3 py-2 text-sm outline-none bg-transparent transition-all focus:border-[#7c5cff]"
                           style={{ borderColor: palette.stroke, color: palette.text }}
                         />
                       </div>
@@ -282,9 +293,10 @@ export default function RegisterPage({ params }) {
                         placeholder="Enter the transaction ID after payment"
                         value={formData.transactionId}
                         onChange={e => setFormData({...formData, transactionId: e.target.value})}
-                        className="w-full rounded-xl border px-3 py-2 text-sm outline-none bg-transparent transition-colors focus:border-[#7c5cff]"
-                        style={{ borderColor: palette.stroke, color: palette.text }}
+                        className={`w-full rounded-xl border px-3 py-2 text-sm outline-none bg-transparent transition-all focus:border-[#7c5cff] ${errors.transactionId ? 'border-red-500 bg-red-500/5' : ''}`}
+                        style={{ borderColor: errors.transactionId ? undefined : palette.stroke, color: palette.text }}
                       />
+                      {errors.transactionId && <p className="text-[10px] text-red-500 mt-1 ml-1">{errors.transactionId}</p>}
                     </div>
 
                     <div>
@@ -309,10 +321,11 @@ export default function RegisterPage({ params }) {
                                reader.readAsDataURL(file);
                              }
                            }}
-                           className="w-full rounded-xl border px-3 py-2 text-sm outline-none bg-transparent transition-colors focus:border-[#7c5cff] file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-[#7c5cff] file:text-white hover:file:opacity-90"
-                           style={{ borderColor: palette.stroke, color: palette.text }}
+                           className={`w-full rounded-xl border px-3 py-2 text-sm outline-none bg-transparent transition-all focus:border-[#7c5cff] file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-[#7c5cff] file:text-white hover:file:opacity-90 ${errors.paymentScreenshot ? 'border-red-500 bg-red-500/5' : ''}`}
+                           style={{ borderColor: errors.paymentScreenshot ? undefined : palette.stroke, color: palette.text }}
                          />
                        </div>
+                       {errors.paymentScreenshot && <p className="text-[10px] text-red-500 mt-1 ml-1">{errors.paymentScreenshot}</p>}
                        {formData.paymentScreenshot && (
                           <div className="mt-2">
                             <img src={formData.paymentScreenshot} alt="Payment Screenshot" className="h-32 w-auto object-contain rounded-lg border" style={{ borderColor: palette.stroke }} />
@@ -338,18 +351,21 @@ export default function RegisterPage({ params }) {
                     </div>
                   </div>
 
-                  <div className="mb-6 flex items-start gap-3 p-3 rounded-xl border bg-black/20" style={{ borderColor: palette.stroke }}>
-                    <input 
-                        type="checkbox" 
-                        id="tc" 
-                        checked={tcAccepted}
-                        onChange={(e) => setTcAccepted(e.target.checked)}
-                        className="mt-1 h-4 w-4 rounded border-gray-600 bg-transparent text-[#7c5cff] focus:ring-[#7c5cff]"
-                    />
-                    <label htmlFor="tc" className="text-xs text-gray-400 leading-relaxed cursor-pointer select-none">
-                        I agree to the <span className="text-[#7c5cff] hover:underline">Terms & Conditions</span>. 
-                        I understand that the platform fee is non-refundable and I agree to the fair play policy of SportsHub.
-                    </label>
+                  <div className="mb-6">
+                    <div className={`flex items-start gap-3 p-3 rounded-xl border transition-all ${errors.tc ? 'border-red-500 bg-red-500/5' : 'border-slate-800 bg-black/20'}`}>
+                      <input 
+                          type="checkbox" 
+                          id="tc" 
+                          checked={tcAccepted}
+                          onChange={(e) => setTcAccepted(e.target.checked)}
+                          className="mt-1 h-4 w-4 rounded border-gray-600 bg-transparent text-[#7c5cff] focus:ring-[#7c5cff]"
+                      />
+                      <label htmlFor="tc" className="text-xs text-gray-400 leading-relaxed cursor-pointer select-none">
+                          I agree to the <span className="text-[#7c5cff] hover:underline">Terms & Conditions</span>. 
+                          I understand that the platform fee is non-refundable and I agree to the fair play policy of SportsHub.
+                      </label>
+                    </div>
+                    {errors.tc && <p className="text-[10px] text-red-500 mt-1 ml-1">{errors.tc}</p>}
                   </div>
 
                   <motion.button

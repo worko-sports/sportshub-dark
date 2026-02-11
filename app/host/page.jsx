@@ -23,6 +23,7 @@ export default function HostPage() {
   const [myEvents, setMyEvents] = useState([]);
   const [tcAccepted, setTcAccepted] = useState(false);
   const [showTcModal, setShowTcModal] = useState(false);
+  const [errors, setErrors] = useState({});
   const [formData, setFormData] = useState({
     title: "",
     sport: "Football",
@@ -82,14 +83,27 @@ export default function HostPage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setErrors({});
     
+    let newErrors = {};
     if (!tcAccepted) {
-        alert("Please accept the Terms & Conditions to publish the event.");
-        return;
+        newErrors.tc = "Please accept the Terms & Conditions";
     }
-
     if (parseInt(formData.fee) < 0) {
-        alert("Entry fee cannot be negative");
+        newErrors.fee = "Entry fee cannot be negative";
+    }
+    if (!formData.title) newErrors.title = "Event title is required";
+    if (!formData.city) newErrors.city = "City is required";
+    if (!formData.start) newErrors.start = "Date is required";
+    if (!formData.org) newErrors.org = "Organizer name is required";
+    if (!formData.prize) newErrors.prize = "Prize pool is required";
+
+    if (Object.keys(newErrors).length > 0) {
+        setErrors(newErrors);
+        // Scroll to first error
+        const firstError = Object.keys(newErrors)[0];
+        const element = document.getElementsByName(firstError)[0] || document.getElementById(firstError);
+        if (element) element.scrollIntoView({ behavior: 'smooth', block: 'center' });
         return;
     }
 
@@ -165,6 +179,7 @@ export default function HostPage() {
               placeholder="e.g. Inter-College Football Cup" 
               value={formData.title} 
               onChange={v => handleChange("title", v)} 
+              error={errors.title}
               required
             />
 
@@ -193,6 +208,7 @@ export default function HostPage() {
                 placeholder="e.g. Delhi" 
                 value={formData.city} 
                 onChange={v => handleChange("city", v)} 
+                error={errors.city}
                 required
               />
             </div>
@@ -204,6 +220,7 @@ export default function HostPage() {
                 type="date"
                 value={formData.start} 
                 onChange={v => handleChange("start", v)} 
+                error={errors.start}
                 required
               />
               <div>
@@ -227,6 +244,7 @@ export default function HostPage() {
                 placeholder="Your Organization / Club" 
                 value={formData.org} 
                 onChange={v => handleChange("org", v)} 
+                error={errors.org}
                 required
             />
           </motion.div>
@@ -248,6 +266,7 @@ export default function HostPage() {
                 placeholder="0" 
                 value={formData.fee} 
                 onChange={v => handleChange("fee", v)} 
+                error={errors.fee}
                 required
               />
               <Field 
@@ -256,6 +275,7 @@ export default function HostPage() {
                 placeholder="e.g. ₹50,000" 
                 value={formData.prize} 
                 onChange={v => handleChange("prize", v)} 
+                error={errors.prize}
                 required
               />
             </div>
@@ -597,7 +617,7 @@ export default function HostPage() {
   );
 }
 
-function Field({ label, placeholder, type = "text", value, onChange, icon, required }) {
+function Field({ label, placeholder, type = "text", value, onChange, icon, required, error }) {
   return (
     <div>
       <label className="text-xs block mb-1.5" style={{ color: palette.textMuted }}>{label}</label>
@@ -608,13 +628,14 @@ function Field({ label, placeholder, type = "text", value, onChange, icon, requi
           placeholder={placeholder}
           value={value}
           onChange={(e) => onChange && onChange(e.target.value)}
-          className="w-full rounded-xl border px-3 py-2 pl-9 text-sm outline-none bg-transparent transition-colors focus:border-[#7c5cff]"
-          style={{ borderColor: palette.stroke, color: palette.text }}
+          className={`w-full rounded-xl border px-3 py-2 pl-9 text-sm outline-none bg-transparent transition-all focus:border-[#7c5cff] ${error ? 'border-red-500/50 bg-red-500/5' : ''}`}
+          style={{ borderColor: error ? undefined : palette.stroke, color: palette.text }}
         />
-        <div className="absolute left-3 top-2.5" style={{ color: palette.textMuted }}>
+        <div className="absolute left-3 top-2.5" style={{ color: error ? '#ef4444' : palette.textMuted }}>
             {icon}
         </div>
       </div>
+      {error && <p className="text-[10px] text-red-500 mt-1 ml-1">{error}</p>}
     </div>
   );
 }

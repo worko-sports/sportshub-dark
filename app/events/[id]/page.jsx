@@ -1,6 +1,7 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
+import Image from "next/image";
 import { motion } from "framer-motion";
 import { ArrowLeft, Calendar, MapPin, Trophy, Users, DollarSign, Clock, Share2, CheckCircle, Info } from "lucide-react";
 import Link from "next/link";
@@ -63,7 +64,10 @@ export default function EventDetailsPage() {
                  <Link href="/" className="flex items-center gap-2 text-sm hover:opacity-80 transition-opacity" style={{ color: palette.textMuted }}>
                     <ArrowLeft className="h-4 w-4" /> Back to Events
                  </Link>
-                 <span className="font-semibold text-lg tracking-tight">SPORTSHUB</span>
+                 <div className="flex items-center gap-2">
+                    <Image src="/logo.png" alt="SportsHub Logo" width={32} height={32} className="object-contain" />
+                    <span className="font-semibold text-lg tracking-tight">SPORTSHUB</span>
+                 </div>
                  <div className="w-20"></div> {/* Spacer */}
             </div>
         </div>

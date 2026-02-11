@@ -2,8 +2,8 @@
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Search, MapPin, Calendar, Trophy, Users, Filter, ArrowRight, Plus, LogIn, User as UserIcon, Clock } from "lucide-react";
-import { motion } from "framer-motion";
+import { Search, MapPin, Calendar, Trophy, Users, Filter, ArrowRight, Plus, LogIn, User as UserIcon, Clock, Menu, X, Star } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 
 const palette = {
   bg: "#0b0e14",
@@ -22,6 +22,7 @@ export default function Page() {
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState("All");
   const [user, setUser] = useState(null);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   useEffect(() => {
     // Check auth
@@ -91,13 +92,12 @@ export default function Page() {
       <nav className="sticky top-0 z-50 border-b backdrop-blur-md bg-[#0b0e14]/80" style={{ borderColor: palette.stroke }}>
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="flex h-16 items-center justify-between gap-4">
-            <div className="flex items-center gap-2">
-              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-[#7c5cff] to-[#00e0b8]">
-                <Trophy className="h-5 w-5 text-white" />
-              </div>
+            <Link href="/" className="flex items-center gap-2 flex-shrink-0">
+              <Image src="/logo.png" alt="SportsHub Logo" width={32} height={32} className="object-contain" />
               <span className="text-xl font-bold tracking-tight">SPORTSHUB</span>
-            </div>
+            </Link>
 
+            {/* Desktop Search */}
             <div className="hidden md:flex flex-1 max-w-md items-center rounded-full border px-4 py-2" style={{ background: palette.surface, borderColor: palette.stroke }}>
               <Search className="h-4 w-4" style={{ color: palette.textMuted }} />
               <input 
@@ -115,23 +115,85 @@ export default function Page() {
                   <Plus className="h-4 w-4" /> Host Event
                 </button>
               </Link>
-              {user ? (
-                <div className="flex items-center gap-3">
-                  <span className="text-sm hidden sm:block">Hi, {user.name}</span>
-                  <div className="h-8 w-8 rounded-full bg-gradient-to-br from-[#7c5cff] to-[#00e0b8] flex items-center justify-center text-xs font-bold text-white">
-                    {user.name[0]}
+              
+              <div className="hidden sm:block">
+                {user ? (
+                  <div className="flex items-center gap-3">
+                    <span className="text-sm">Hi, {user.name}</span>
+                    <div className="h-8 w-8 rounded-full bg-gradient-to-br from-[#7c5cff] to-[#00e0b8] flex items-center justify-center text-xs font-bold text-white">
+                      {user.name[0]}
+                    </div>
                   </div>
-                </div>
-              ) : (
-                <Link href="/login">
-                  <button className="flex items-center gap-2 rounded-full px-5 py-2 text-sm font-medium transition-all hover:opacity-90" style={{ background: palette.primary, color: "white" }}>
-                    <LogIn className="h-4 w-4" /> Login
-                  </button>
-                </Link>
-              )}
+                ) : (
+                  <Link href="/login">
+                    <button className="flex items-center gap-2 rounded-full px-5 py-2 text-sm font-medium transition-all hover:opacity-90" style={{ background: palette.primary, color: "white" }}>
+                      <LogIn className="h-4 w-4" /> Login
+                    </button>
+                  </Link>
+                )}
+              </div>
+
+              {/* Mobile Menu Button */}
+              <button 
+                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                className="p-2 rounded-lg sm:hidden"
+                style={{ background: palette.surface, color: palette.text }}
+              >
+                {isMobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+              </button>
             </div>
           </div>
         </div>
+
+        {/* Mobile Menu */}
+        <AnimatePresence>
+          {isMobileMenuOpen && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: "auto" }}
+              exit={{ opacity: 0, height: 0 }}
+              className="sm:hidden border-t overflow-hidden"
+              style={{ background: palette.surface, borderColor: palette.stroke }}
+            >
+              <div className="px-4 py-6 space-y-4">
+                <div className="flex items-center rounded-full border px-4 py-2" style={{ borderColor: palette.stroke }}>
+                  <Search className="h-4 w-4" style={{ color: palette.textMuted }} />
+                  <input 
+                    type="text" 
+                    placeholder="Search events..." 
+                    className="ml-3 flex-1 bg-transparent text-sm outline-none"
+                    value={search}
+                    onChange={(e) => setSearch(e.target.value)}
+                  />
+                </div>
+                
+                <div className="grid grid-cols-1 gap-2">
+                  <Link href="/host" onClick={() => setIsMobileMenuOpen(false)}>
+                    <div className="flex items-center gap-3 p-3 rounded-xl bg-white/5">
+                      <Plus className="h-5 w-5" />
+                      <span>Host Event</span>
+                    </div>
+                  </Link>
+                  {user ? (
+                    <div className="flex items-center gap-3 p-3 rounded-xl bg-white/5">
+                      <div className="h-8 w-8 rounded-full bg-gradient-to-br from-[#7c5cff] to-[#00e0b8] flex items-center justify-center text-xs font-bold text-white">
+                        {user.name[0]}
+                      </div>
+                      <span>{user.name}</span>
+                    </div>
+                  ) : (
+                    <Link href="/login" onClick={() => setIsMobileMenuOpen(false)}>
+                      <div className="flex items-center gap-3 p-3 rounded-xl bg-[#7c5cff]">
+                        <LogIn className="h-5 w-5" />
+                        <span>Login / Register</span>
+                      </div>
+                    </Link>
+                  )}
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </nav>
 
       {/* Hero Section - Unstop Style */}
@@ -240,8 +302,20 @@ export default function Page() {
             <h2 className="text-2xl font-bold mb-8">Trending Events</h2>
             
             {loading ? (
-            <div className="flex justify-center py-12">
-                <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2" style={{ borderColor: palette.primary }}></div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {[...Array(6)].map((_, i) => (
+                    <div key={i} className="rounded-2xl border overflow-hidden h-full flex flex-col" style={{ background: palette.surface, borderColor: palette.stroke }}>
+                        <div className="h-48 bg-white/5 animate-pulse" />
+                        <div className="p-5 space-y-3">
+                            <div className="h-6 bg-white/5 animate-pulse rounded-lg w-3/4" />
+                            <div className="h-4 bg-white/5 animate-pulse rounded-lg w-1/2" />
+                            <div className="pt-4 border-t flex justify-between" style={{ borderColor: palette.stroke }}>
+                                <div className="h-8 bg-white/5 animate-pulse rounded-lg w-1/3" />
+                                <div className="h-8 bg-white/5 animate-pulse rounded-lg w-1/3" />
+                            </div>
+                        </div>
+                    </div>
+                ))}
             </div>
             ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -293,6 +367,96 @@ export default function Page() {
                 ))}
             </div>
             )}
+        </section>
+
+        {/* How it Works */}
+        <section className="py-12">
+            <div className="text-center mb-12">
+                <h2 className="text-3xl font-bold mb-4">How SportsHub Works</h2>
+                <p style={{ color: palette.textMuted }}>Simple steps to start your sports journey</p>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                {[
+                    { title: "Find Event", desc: "Search for your favorite sports tournaments in your city.", icon: <Search className="h-6 w-6" /> },
+                    { title: "Register", desc: "Quick and easy registration process for teams and individuals.", icon: <UserIcon className="h-6 w-6" /> },
+                    { title: "Compete", desc: "Show up, play your best, and win exciting prizes and glory.", icon: <Trophy className="h-6 w-6" /> }
+                ].map((step, idx) => (
+                    <motion.div 
+                        key={idx}
+                        initial={{ opacity: 0, y: 20 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ delay: idx * 0.2 }}
+                        className="p-8 rounded-3xl border text-center group hover:border-[#7c5cff]/50 transition-colors"
+                        style={{ background: palette.surface, borderColor: palette.stroke }}
+                    >
+                        <div className="h-16 w-16 rounded-2xl bg-[#7c5cff]/10 flex items-center justify-center mx-auto mb-6 text-[#7c5cff] group-hover:scale-110 transition-transform">
+                            {step.icon}
+                        </div>
+                        <h3 className="text-xl font-bold mb-3">{step.title}</h3>
+                        <p className="text-sm leading-relaxed" style={{ color: palette.textMuted }}>{step.desc}</p>
+                    </motion.div>
+                ))}
+            </div>
+        </section>
+
+        {/* Testimonials */}
+        <section className="py-12 bg-gradient-to-b from-transparent to-[#7c5cff]/5 rounded-[3rem] px-8">
+            <div className="text-center mb-12">
+                <h2 className="text-3xl font-bold mb-4">What Athletes Say</h2>
+                <p style={{ color: palette.textMuted }}>Trusted by thousands of players and organizers</p>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {[
+                    { name: "Rahul Sharma", role: "Footballer", text: "SportsHub made it so easy to find local tournaments. The registration was seamless!" },
+                    { name: "Ananya Iyer", role: "Badminton Player", text: "I love the clean interface. Finding events by sport and city is a breeze." },
+                    { name: "Vikram Singh", role: "Event Organizer", text: "Hosting my cricket league on SportsHub increased our registrations by 40%." }
+                ].map((t, idx) => (
+                    <motion.div 
+                        key={idx}
+                        initial={{ opacity: 0, scale: 0.9 }}
+                        whileInView={{ opacity: 1, scale: 1 }}
+                        viewport={{ once: true }}
+                        transition={{ delay: idx * 0.1 }}
+                        className="p-6 rounded-2xl border"
+                        style={{ background: palette.surface, borderColor: palette.stroke }}
+                    >
+                        <div className="flex gap-1 mb-4 text-yellow-500">
+                            {[...Array(5)].map((_, i) => <Star key={i} className="h-4 w-4 fill-current" />)}
+                        </div>
+                        <p className="text-sm italic mb-6 leading-relaxed" style={{ color: palette.text }}>"{t.text}"</p>
+                        <div className="flex items-center gap-3">
+                            <div className="h-10 w-10 rounded-full bg-gradient-to-br from-[#7c5cff] to-[#00e0b8] flex items-center justify-center font-bold text-xs">
+                                {t.name[0]}
+                            </div>
+                            <div>
+                                <p className="text-sm font-bold">{t.name}</p>
+                                <p className="text-xs" style={{ color: palette.textMuted }}>{t.role}</p>
+                            </div>
+                        </div>
+                    </motion.div>
+                ))}
+            </div>
+        </section>
+
+        {/* Call to Action */}
+        <section className="py-16 text-center">
+            <motion.div 
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                className="max-w-3xl mx-auto p-12 rounded-[3rem] border border-[#7c5cff]/20 bg-gradient-to-br from-[#111520] to-[#0b0e14]"
+            >
+                <h2 className="text-4xl font-bold mb-6">Ready to Play?</h2>
+                <p className="text-lg mb-8" style={{ color: palette.textMuted }}>Join the SportsHub community today and never miss a game.</p>
+                <div className="flex flex-wrap justify-center gap-4">
+                    <Link href="/login">
+                        <button className="px-10 py-4 rounded-full font-bold text-white shadow-xl shadow-[#7c5cff]/20 hover:scale-105 transition-all" style={{ background: palette.primary }}>
+                            Get Started Now
+                        </button>
+                    </Link>
+                </div>
+            </motion.div>
         </section>
 
       </main>
