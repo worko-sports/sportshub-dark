@@ -89,15 +89,11 @@ export default function Footer() {
             <ul className="space-y-4">
               <li className="flex items-start gap-3 text-sm" style={{ color: palette.textMuted }}>
                 <Mail className="h-5 w-5 shrink-0 text-[#7c5cff]" />
-                <span>support@sportshub.com</span>
-              </li>
-              <li className="flex items-start gap-3 text-sm" style={{ color: palette.textMuted }}>
-                <Phone className="h-5 w-5 shrink-0 text-[#7c5cff]" />
-                <span>+91 98765 43210</span>
+                <span>w89298354@gmail.com</span>
               </li>
               <li className="flex items-start gap-3 text-sm" style={{ color: palette.textMuted }}>
                 <MapPin className="h-5 w-5 shrink-0 text-[#7c5cff]" />
-                <span>Chandigarh, India</span>
+                <span>Delhi, India</span>
               </li>
             </ul>
           </div>
